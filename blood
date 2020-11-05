@@ -1,0 +1,178 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+
+struct donor {
+    string DonorName, DonorLastName;
+    int DonorYearOfBirth, AmountOfBloodContainer; // YearOfBirth = YoB
+    struct donor* pNext;
+    donor(string name, int YoB, string lastName, int blood) {
+        DonorName = name;
+        DonorLastName = lastName;
+        DonorYearOfBirth = YoB;
+        AmountOfBloodContainer = blood;
+        pNext = NULL;
+    };
+};
+
+struct Queue {
+    donor* front, * rear;
+    Queue() {
+        front = rear = NULL;
+    }
+
+    void enQueue(string name, int age, string lastName, int blood) {
+        donor* temp_node = new donor(name, age, lastName, blood);
+
+        if (rear == NULL) {
+            front = rear = temp_node;
+        }
+        else {
+            rear->pNext = temp_node;
+            rear = temp_node;
+        }
+    }
+
+    void deQueue() {
+
+        if (rear == NULL) { //check if list is empty
+            cout << "The list is empty!";
+            return;
+        }
+
+        donor* temp = front;
+
+        if (temp->pNext != NULL) { //avoid accessing unallocated memory
+            front = front->pNext;
+        }
+
+        if (front == rear) { //if only one node set all pointers to NULL
+            front = rear = temp = NULL;
+        }
+
+        delete(temp);
+
+    }
+
+    void printDonorList() {
+        donor* temp = front;
+        int DonorCount = 0, bloodml = 0;
+
+        if (rear == NULL) { //checking if list is empty
+            cout << "The list is empty!" << endl;
+            return;
+        }
+
+        if (temp != rear) { //if more than one element, add last element time/count instantly
+            DonorCount = DonorCount + 1;
+            bloodml = rear->AmountOfBloodContainer + bloodml;
+        }
+
+        do { //count all elements except last one
+            DonorCount = DonorCount + 1;
+            bloodml = temp->AmountOfBloodContainer + bloodml;
+            if (temp->pNext != NULL) //check if next element is the last
+                temp = temp->pNext;
+
+        } while (temp->pNext != NULL);
+
+        cout << "Total volunteers count: " << DonorCount << endl;
+        cout << "Total amount of blood (ml): " << bloodml << endl;
+    }
+
+    void cancel_all() {
+        donor* temp = front;
+
+        if (temp == NULL) { //checking if list is empty
+            cout << "List is empty!" << endl;
+            return;
+        }
+        if (front == rear) { //checking if only node exists
+            deQueue();
+            return;
+        }
+        do {
+            temp = temp->pNext;
+            deQueue();
+        } while (temp->pNext != NULL); //deleting all nodes except the last one
+
+        if (rear != NULL) { //deleting last node
+            deQueue();
+        }
+    }
+
+    void remove_shorter_than(int duration) {
+
+    }
+
+};
+
+int main() {
+
+    int option = 0;
+    Queue q;
+
+begin:
+    cout << "Donor center line register" << endl;
+    cout << "* If you want to register a new donor - press 1 *" << endl;
+    cout << "* If you want to print all donors lood amount - press 2 *" << endl;
+    cout << "* Cancel all fill in - press 3 * " << endl;
+    cout << "*  press 4 *" << endl;
+    cout << "* To insert minimal blood of donor - press 5 *" << endl;
+    cout << "* PRESS 6 to EXIT *" << endl;
+    cout << "Your option: ";
+    cin >> option;
+
+
+    if (option == 1) {
+        string name, lastName, str;
+        int YoB = 0, stime = 0;
+
+        getline(cin, str);
+
+        cout << "Enter donor name: ";
+        getline(cin, name);
+        cout << "Enter Year Of Birth of donor: ";
+        cin >> YoB;
+        getline(cin, str);
+        cout << "Enter last name of donor: ";
+        getline(cin, lastName);
+        cout << "Enter amount of blood container (ml): ";
+        cin >> stime;
+
+        q.enQueue(name, YoB, lastName, stime);
+
+        cout << "You have successfully added customer " << name << ", " << lastName
+            << " Year Of Birth:  " << YoB << ", blood container (ml): " << stime << endl;
+    }
+
+    else if (option == 2) {
+        q.printDonorList();
+    }
+    else if (option == 3) {
+        q.cancel_all();
+        cout << "We are sorry we are full" << endl;
+    }
+    else if (option == 5) {
+        int duration;
+
+        cout << "Enter minimal blood of donor: ";
+        cin >> duration;
+
+
+    }
+
+
+
+    else if (option == 6) {
+        return(0);
+    }
+
+    goto begin;
+
+
+
+
+}
